@@ -1,0 +1,3 @@
+# setting
+kibana/config/kibana.yml
+pro-fluentd/fluent.conf

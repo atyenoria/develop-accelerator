@@ -1,0 +1,1 @@
+sed -i -e "s|wsrep_cluster_address|http://www.aipo.com/|g" galera.tmpl

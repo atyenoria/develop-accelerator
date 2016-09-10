@@ -1,0 +1,15 @@
+FieldName = "msg"     # default "message"
+ReadBufferSize = 1048576  # default 64KB.
+
+[[Logs]]
+File = "/var/log/nginx/access"
+Tag = "access"
+
+[[Logs]]
+File = "/var/log/nginx/error"
+Tag = "error"
+
+[[Servers]]
+Host = "10.130.19.91"
+Port = 24224
+

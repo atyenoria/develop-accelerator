@@ -1,0 +1,18 @@
+# galera:
+#   build: ./
+#   container_name: galera
+#   ports:
+#     - "8080:8080"
+#     - "4444:4444"
+#     - "4567:4567"
+#     - "3306:3306"
+#   # command: bash
+#   command: /bin/bash /start.sh
+#   # command: mysqld --wsrep-new-cluster --init-file=/bootstrap.sql
+#   dns:
+#     - 172.17.0.1
+#   tty: true
+#   # volumes:
+#     # - "./mysql:/etc/mysql"/
+#     # - "/var/lib/mysql"
+

@@ -1,0 +1,11 @@
+
+Host *
+    StrictHostKeyChecking no
+
+Host laravel
+  User git
+  Port 22
+  HostName github.com
+  IdentityFile /laravel/.ssh/id_rsa1
+  TCPKeepAlive yes
+  IdentitiesOnly yes

@@ -1,0 +1,78 @@
+general:
+  branches:
+    only:
+      - master
+
+
+
+machine:
+  timezone:
+    Asia/Tokyo
+  node:
+    version: 5.5.0
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+    - sudo apt-get install jq
+  services:
+    - docker
+  environment:
+    IMAGE_NAME: laravel-prod
+    APP1_CLONE_URL: git@github.com:HoritaWorks/laravel_app.git
+    APP1_CLONE_BRANCH: master-build
+    APP1_DEPLOY_BRANCH: master-build-ok
+    E2E_URL: git@github.com:HoritaWorks/E2Etest.git
+    E2E_BRANCH: master
+    APP_DOMAIN: l.com
+    DB_DOMAIN: db.circleci.com
+
+
+
+
+
+dependencies:
+  cache_directories:
+    - ~/.composer/cache
+  pre:
+    - sudo service mysql stop
+    - sudo sed -i -e "$ a 127.0.0.1 $APP_DOMAIN" /etc/hosts
+    - sudo sed -i -e "$ a 127.0.0.1 $DB_DOMAIN" /etc/hosts
+    - sudo sed -i -e "$ a 127.0.0.1 l.com" /etc/hosts
+    - chmod 600 circle/pkey
+    - sudo ssh root@unko -g -f -N -R 80:$APP_DOMAIN:80 -i circle/pkey
+    - git clone -b $E2E_BRANCH $E2E_URL
+    - sh circle/domain.sh
+    - cd main && docker-compose build &&  docker-compose up -d
+    - cp -f circle/.bashrc ~/.bashrc
+    - docker run -it -d -p 4532:80 -p 4600:4444 -p 5900:5900 --add-host="$APP_DOMAIN:$(sh circle/ipget.sh eth0)"  --name='f1' selenium/standalone-firefox-debug
+    - sudo ssh root@unko -g -f -N -R 5900:localhost:5900 -i circle/pkey
+  override:
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+
+
+
+
+test:
+  override:
+    - cd E2Etest && npm install
+    - bash circle/up_check.sh
+    - sed -i -e "/APP_ENV/c\APP_ENV=production" data/volume/web/.env
+    - bash circle/web.sh 0
+    - bash circle/web.sh 2
+    - bash circle/e2e.sh
+    # - docker commit app atyenoria/$IMAGE_NAME
+
+
+
+
+deployment:
+  github:
+    branch: master
+    commands:
+      # - docker push atyenoria/$IMAGE_NAME
+      - git clone -b $APP1_CLONE_BRANCH $APP1_CLONE_URL
+      - mv circle/release.sh laravel_app
+      - cd laravel_app && sh release.sh $APP1_DEPLOY_BRANCH
+      - sudo ssh  -i circle/pkey root@unko bash /root/git.sh
+      - sh circle/web.sh 1
+
+

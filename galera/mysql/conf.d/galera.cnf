@@ -1,0 +1,32 @@
+[mysqld]
+character_set_server= utf8
+character_set_filesystem=utf8
+collation-server=utf8_general_ci
+init-connect='SET NAMES utf8'
+init_connect='SET collation_connection = utf8_general_ci'
+skip-character-set-client-handshake
+
+
+[mysql]
+default-character-set=utf8
+user=
+password=
+
+
+
+
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_cluster_name=test_cluster
+wsrep_cluster_address=gcomm://
+wsrep_sst_method=rsync
+wsrep_sst_auth="root:root"
+wsrep_node_address=
+wsrep_node_name="l1"
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+wsrep_slave_threads=1
+innodb_flush_log_at_trx_commit=0

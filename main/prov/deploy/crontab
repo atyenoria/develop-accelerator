@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SHELL=/bin/bash
+PATH=/root/bin:/usr/local/bin:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+* * * * * root for i in `seq 0 1 59`;do (sleep ${i} ; /bin/bash /root/float_script.sh  >> /log.float 2>&1) & done; >> /log.float  2>&1

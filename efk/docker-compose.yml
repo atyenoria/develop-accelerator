@@ -1,0 +1,30 @@
+elasticsearch:
+  image: elasticsearch:latest
+  container_name: el
+  command: elasticsearch -Des.network.host=0.0.0.0
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+
+kibana:
+  build: kibana/
+  container_name: ki
+  # volumes:
+    # - ./kibana/config/kibana.yml:/opt/kibana/config/kibana.yml
+  ports:
+    - "5601:5601"
+  links:
+    - elasticsearch
+
+
+fluend:
+  build: prod-fluentd
+  container_name: fl
+  # volumes:
+    # - ./prod-fluentd/log:/fluentd/log
+    # - /fluentd/log
+  tty: true
+  # command: /bin/sh
+  ports:
+    - "24224:24224"

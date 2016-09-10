@@ -1,0 +1,86 @@
+app2:
+  build: ./
+  container_name: app2
+  ports:
+    - "80:80"
+    - "5050:5050"
+    - "8000:8000"
+    - "4000:4000"
+    - "443:443"
+  environment:
+      CLOUD_APP_DOMAIN: "unko"
+      APP_LARAVE_DEBUG: "false"
+      LARAVEL_APP_ENV: "production"
+      APP_LOCAL_BRANCH: "master"
+      APP_CLOUD_BRANCH: "origin/master-build"
+      APP_REPO_URL: "git@laravel:unko/laravel_app.git" # !!!notice url!!!
+      DB_USERNAME: "root"
+      DB_LARAVEL_PASSWORD: "unko"
+      APP_KEY: unko
+      DNS_IP: 172.17.0.1
+  links:
+   - db2:db2
+  working_dir: "/app"
+  volumes:
+    - "~/.composer:/root/.composer"
+    - "../data/volume:/app"
+    - "./file/etc-php:/usr/local/etc"
+    - "./file/nginx:/etc/nginx"
+    - "./file/supervisor/:/etc/supervisor"
+    - "./local_check:/local_check"
+  command: "/bin/bash /start.sh"
+  tty: true
+
+
+
+db2:
+  build: ../galera
+  container_name: db2
+  ports:
+    - "8080:8080"
+    - "4444:4444"
+    - "4567:4567"
+    - "3306:3306"
+  command: /bin/bash /start.sh
+  environment:
+    MYSQL_ROOT_PASSWORD: "unko"
+    MYSQL_DATABASE: "unko"
+    DNS_IP: 172.17.0.1
+  tty: true
+  volumes:
+    # - "./mysql:/etc/mysql"
+    - "/var/lib/mysql"
+    - "./local_check:/local_check"
+
+
+
+# redis:
+#   build: ../redis
+#   container_name: redis
+#   ports:
+#     - "4445:4445"
+#     - "4446:4446"
+#     - "4447:4447"
+#   working_dir: /usr/local/etc/
+#   net: host
+#   tty: true
+#   volumes:
+#     - "./local_check:/local_check"
+#   command: "/bin/bash /start.sh"
+#   # command: "/usr/bin/supervisord -n"
+
+
+
+# cron:
+#   build: ../cron
+#   container_name: cron
+#   command: /bin/bash /start.sh
+#   environment:
+#       DB_PASSWORD: "unko"
+#   volumes:
+#     - "./local_check:/local_check"
+#   dns:
+#     - 172.17.0.1
+#   tty: true
+#   links:
+#     - db:db

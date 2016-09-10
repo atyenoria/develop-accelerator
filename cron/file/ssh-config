@@ -1,0 +1,8 @@
+Host github.com
+  User git
+  Port 22
+  HostName github.com
+  IdentityFile /laravel/.ssh/pkey
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+  StrictHostKeyChecking=no

@@ -1,0 +1,2 @@
+conf:
+	bash conf.sh

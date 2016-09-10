@@ -1,0 +1,14 @@
+redis:
+  build: ./
+  container_name: redis
+
+    - "4445:4445"
+    - "4446:4446"
+  working_dir: /usr/local/etc/
+  net: host
+  tty: true
+  # volumes:
+    # - "./file:/usr/local/etc"
+  # command: "/bin/bash"
+  command: "/usr/bin/supervisord -n"
+
